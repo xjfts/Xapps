@@ -3,6 +3,8 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <errno.h>
+#include <unistd.h>
+#include <string.h>
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +15,7 @@ int main(int argc, char *argv[])
     if(argc != 2){
          printf("usage: mygpio No. No is your gpio No.\n");
          exit(1);
-    } 
+    }
     printf("GPIO test is running...\n");
 
     Exportfd = open("/sys/class/gpio/export", O_WRONLY);

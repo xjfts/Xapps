@@ -1,0 +1,70 @@
+===============================================
+dts file:
+
+		qspi0: spi@e000d000 {
+			compatible = "xlnx,ps7-qspi-1.00.a";
+			reg = <0xE000D000 0x1000>;
+			interrupts = <0 19 4>;
+			interrupt-parent = <&gic>;
+			speed-hz = <200000000>;
+			bus-num = <1>;
+			num-chip-select = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			is-dual = <0>;
+			flash@0 {
+			compatible = "n25q128";
+			reg = <0x0>;
+			spi-max-frequency = <50000000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			partition@qspi-fsbl {
+				label = "qspi-fsbl";
+				reg = <0x0 0x80000>;
+				};
+			partition@qspi-u-boot {
+				label = "qspi-u-boot";
+				reg = <0x80000 0x80000>;
+				};
+			partition@qspi-linux {
+				label = "qspi-linux";
+				reg = <0x100000 0x500000>;
+				};
+			partition@qspi-device-tree {
+				label = "qspi-device-tree";
+				reg = <0x600000 0x20000>;
+				};
+			partition@qspi-user {
+				label = "qspi-user";
+				reg = <0x620000 0xE0000>;
+				};
+			partition@qspi-scratch {
+				label = "qspi-scratch";
+				reg = <0x700000 0x100000>;
+				};
+			partition@qspi-rootfs {
+				label = "qspi-rootfs";
+				reg = <0x800000 0x800000>;
+				};
+			};
+		};
+		
+==============================================
+uboot zynq_common.h:
+
+	"qspiboot=echo Copying Linux from QSPI flash to RAM... && " \
+		"sf probe 0 0 0 && " \
+		"sf read 0x3000000 0x100000 ${kernel_size} && " \
+		"sf read 0x2A00000 0x600000 ${devicetree_size} && " \
+		"echo Copying ramdisk... && " \
+		"sf read 0x2000000 0x800000 ${ramdisk_size} && " \
+		"bootm 0x3000000 0x2000000 0x2A00000\0" \	
+		
+==============================================
+linux commands:
+
+zynq> flashcp -v BOOT.BIN /dev/mtd0
+zynq> flashcp -v zImage /dev/mtd2
+zynq> flashcp -v devicetree.dtb /dev/mtd3
+zynq> flashcp -v ramdisk8M.image.gz /dev/mtd6
+
