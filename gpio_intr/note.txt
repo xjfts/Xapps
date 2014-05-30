@@ -1,0 +1,10 @@
+Figuring out the exact GPIO was not totally obvious when there were multiple GPIOs in the system. One way to do is to go into
+the gpiochips in /sys/class/gpio and view the label as it should reflect the address of the GPIO in the system. The name of the
+the chip appears to be the 1st GPIO of the controller.
+
+zynq> cat /sys/class/gpio/gpiochip0/label 
+xgpiops
+zynq> cat /sys/class/gpio/gpiochip255/label 
+/amba@0/gpio@41200000
+
+/mnt/gpio_app.elf 255 &

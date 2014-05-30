@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     Exportfd = open("/sys/class/gpio/export", O_WRONLY);
     if(Exportfd < 0){
-         printf("Cannot open GPIO tp export it\n");
+         printf("Cannot open GPIO to export it\n");
          perror("OPEN EXPORT:");
          exit(1);
     }
