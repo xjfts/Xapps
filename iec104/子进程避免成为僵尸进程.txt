@@ -1,0 +1,27 @@
+signal(SIGCHLD, SIG_IGN); //忽略SIGCHLD信号，这常用于并发服务器的性能的一个技巧
+//因为并发服务器常常fork很多子进程，子进程终结之后需要
+//服务器进程去wait清理资源。如果将此信号的处理方式设为
+//忽略，可让内核把僵尸子进程转交给init进程去处理，省去了
+//大量僵尸进程占用系统资源。(Linux Only)
+ 
+
+some code();
+ 
+
+pid = fork(); //生成一个子进程
+if (pid < 0) // error check.
+handle_err();
+ 
+
+if (pid == 0)
+exit (execl(....)); // child process.
+else
+if (wait(&ret) < 0)
+perror(/"wait/"); //parent process
+//在这里wait，都会得No Such process的错误，
+//因为子进程终止后，内核会向父进程发送SIGCHLD
+//信号，但是上面已将此信号设为忽略，实质上由
+//init来接收此子进程的处理。
+对于某些进程，特别是服务器进程往往在请求到来时生成子进程处理请求。如果父进程不等待子进程结束，子进程将成为僵尸进程（zombie）从而占用系统资源。如果父进程等待子进程结束，将增加父进程的负担，影响服务器进程的并发性能。在Linux下可以简单地将 SIGCHLD信号的操作设为SIG_IGN。
+signal(SIGCHLD,SIG_IGN);
+这样，内核在子进程结束时不会产生僵尸进程。这一点与BSD4不同，BSD4下必须显式等待子进程结束才能释放僵尸进程。

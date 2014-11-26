@@ -1,3 +1,6 @@
+cat system.bin > /dev/xdevcfg
+
+
 ===============================================
 dts file:
 
@@ -67,4 +70,7 @@ zynq> flashcp -v BOOT.BIN /dev/mtd0
 zynq> flashcp -v zImage /dev/mtd2
 zynq> flashcp -v devicetree.dtb /dev/mtd3
 zynq> flashcp -v ramdisk8M.image.gz /dev/mtd6
+linux启动后，再烧写FPGA配置文件
 
+zynq> flashcp -v system.bin /dev/mtd4
+cat system.bin > /dev/xdevcfg
